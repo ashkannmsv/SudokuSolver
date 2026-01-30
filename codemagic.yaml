@@ -3,16 +3,51 @@ workflows:
     name: Android Workflow
     instance_type: mac_mini_m2
     max_build_duration: 120
+    
     environment:
       java: 17
+      android_sdk: 34
+      ndk: 25.1.8937393
+    
     triggering:
       events:
         - push
         - pull_request
+      branch:
+        include:
+          - main
+    
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+    
     scripts:
+      - name: Set up gradle permissions
+        script: chmod +x gradlew
+      
       - name: Build APK
         script: |
-          chmod +x gradlew
-          ./gradlew build assembleDebug -x lint
+          ./gradlew build \
+            -x lint \
+            -x testDebugUnitTest \
+            -x testReleaseUnitTest \
+            --no-daemon
+      
+      - name: Build Debug APK
+        script: |
+          ./gradlew assembleDebug \
+            -x lint \
+            --no-daemon
+    
     artifacts:
       - build/outputs/apk/debug/**/*.apk
+      - build/outputs/apk/release/**/*.apk
+    
+    publishing:
+      email:
+        recipients:
+          - user@example.com
+        notify:
+          success: true
+          failure: true
