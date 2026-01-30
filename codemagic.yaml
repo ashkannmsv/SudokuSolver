@@ -10,15 +10,13 @@ workflows:
         - push
         - pull_request
     scripts:
-      - name: Install gradle
+      - name: Build APK with Gradle Wrapper
         script: |
-          brew install gradle
-      - name: Build APK
-        script: |
-          gradle build -x lint
+          chmod +x ./gradlew
+          ./gradlew build -x lint --no-daemon
       - name: Build Release APK
         script: |
-          gradle assembleRelease -x lint
+          ./gradlew assembleRelease -x lint --no-daemon
     artifacts:
       - build/outputs/apk/debug/app-debug.apk
       - build/outputs/apk/release/**/*.apk
