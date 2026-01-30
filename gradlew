@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 GRADLE_URL=https://services.gradle.org/distributions/gradle-8.4-bin.zip
 GRADLE_HOME=$HOME/.gradle/gradle-8.4
 if [ ! -d "$GRADLE_HOME/bin" ]; then
@@ -8,4 +9,5 @@ if [ ! -d "$GRADLE_HOME/bin" ]; then
   unzip -q gradle-8.4-bin.zip
   rm gradle-8.4-bin.zip
 fi
+cd "$SCRIPT_DIR"
 exec $GRADLE_HOME/bin/gradle "$@"
