@@ -6,16 +6,11 @@ workflows:
     
     environment:
       java: 17
-      android_sdk: 34
-      ndk: 25.1.8937393
     
     triggering:
       events:
         - push
         - pull_request
-      branch:
-        include:
-          - main
     
     cache:
       cache_paths:
@@ -26,14 +21,6 @@ workflows:
       - name: Set up gradle permissions
         script: chmod +x gradlew
       
-      - name: Build APK
-        script: |
-          ./gradlew build \
-            -x lint \
-            -x testDebugUnitTest \
-            -x testReleaseUnitTest \
-            --no-daemon
-      
       - name: Build Debug APK
         script: |
           ./gradlew assembleDebug \
@@ -42,7 +29,6 @@ workflows:
     
     artifacts:
       - build/outputs/apk/debug/**/*.apk
-      - build/outputs/apk/release/**/*.apk
     
     publishing:
       email:
