@@ -10,18 +10,15 @@ workflows:
         - push
         - pull_request
     scripts:
-      - name: Grant execute permission for gradlew
+      - name: Install gradle
         script: |
-          chmod +x ./gradlew
-      - name: Set up local properties
-        script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          brew install gradle
       - name: Build APK
         script: |
-          ./gradlew build -x lint --no-daemon
+          gradle build -x lint
       - name: Build Release APK
         script: |
-          ./gradlew assembleRelease -x lint --no-daemon
+          gradle assembleRelease -x lint
     artifacts:
       - build/outputs/apk/debug/app-debug.apk
       - build/outputs/apk/release/**/*.apk
