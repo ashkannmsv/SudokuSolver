@@ -60,6 +60,14 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnGallery).setOnClickListener {
             openGallery()
         }
+
+        // Display sample board initially
+        displaySampleBoard()
+    }
+
+    private fun displaySampleBoard() {
+        val sampleBoard = Array(9) { intArrayOf(5, 3, 0, 0, 7, 0, 0, 0, 0) }
+        puzzleGridView.setBoard(sampleBoard)
     }
 
     private fun openCamera() {
@@ -72,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_GALLERY)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
@@ -79,7 +88,11 @@ class MainActivity : AppCompatActivity() {
                 REQUEST_CAMERA -> data?.getParcelableExtra<Bitmap>("data")
                 REQUEST_GALLERY -> {
                     val uri = data?.data ?: return
-                    MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    try {
+                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 else -> null
             } ?: return
@@ -98,7 +111,8 @@ class MainActivity : AppCompatActivity() {
                 statusText.text = "Solving puzzle..."
                 puzzleGridView.setBoard(board)
 
-                val solver = SudokuSolver(board.map { it.copyOf() }.toTypedArray())
+                val boardCopy = Array(9) { i -> board[i].copyOf() }
+                val solver = SudokuSolver(boardCopy)
                 val solved = solver.solve()
 
                 if (solved) {
